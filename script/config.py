@@ -12,7 +12,7 @@ DB_NAME="your dbms name"
 PASSWORD=quote_plus(DB_PASSWORD)
 
 ENGINE = create_engine(
-    f"mysql+pymysql://{DB_USERNAME}:{PASSWORD}@{DB_HOST}/{DB_NAME}"
+   "create your connection Here"
 )
 
 CSV_FILE_PATH=r"your file path"
