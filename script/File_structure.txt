@@ -1,0 +1,10 @@
+project/
+│
+|-- config.py            # configuration: DB connection, file paths
+|-- data_loading.py      # DataLoading class: CSV → SQL
+|--data_cleaning.py      # Clean class: Data cleaning 
+|--model_train.py        # model class: train model
+|--EDA.py                # EDA class  
+|-- main.py              # Orchestrates pipeline
+|-- utils.py             # helper functions
+└─ logs/                # For storing logs if needed
