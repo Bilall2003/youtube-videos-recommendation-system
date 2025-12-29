@@ -351,7 +351,7 @@ class Dashboard:
             st.title("Each Channel Insights")
             channel_sel=st.selectbox("Select Channel Name",list(df["channel_name"].unique()))
             filtered_df = df[df["channel_name"] == channel_sel]  #check channel name if its exist or not
-
+            
             st.metric("Total Videos", filtered_df["Video_title"].nunique()) #count unique video title
             
             col1,col2=st.columns([10,10],gap="medium")
@@ -371,8 +371,20 @@ class Dashboard:
                 st.subheader("Description")
                 st.caption("Download it for better experience")
                 st.dataframe(filtered_df[["description"]].drop_duplicates())
-                
             
+            sele_video=st.selectbox("Choose video to view insights",filtered_df["Video_title"].unique())
+            video_df = filtered_df[filtered_df["Video_title"] == sele_video]
+            df_melt=video_df.melt(
+                id_vars=["Video_title","trending_date"],
+                value_vars=["views","likes","dislikes","comment_count"],
+                var_name="metric",
+                value_name="count"
+            )
+            st.dataframe(df_melt)
+            fig,ax=plt.subplots(figsize=(10,6))
+            sns.barplot(y="trending_date",x="count",hue="metric",data=df_melt,ax=ax)
+            ax.set_title("Video Analysis Insights")
+            st.pyplot(fig)
                 
         def recommendation_page():
             st.success("🎯 Recommendation Engine Area")
