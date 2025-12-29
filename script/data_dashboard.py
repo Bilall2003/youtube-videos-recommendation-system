@@ -342,13 +342,99 @@ class Dashboard:
 
         def overview_page():
             st.markdown("<h2 class = 'title'>Get a quick snapshot of video feed and trending content.</h2>",unsafe_allow_html=True)
-            Eda=EDA()
+            
+            st.title("Overall Insights")
+            Eda=EDA() 
             gr1,gr2,long_df=Eda.analysis(df)
             Eda.insights(gr1,gr2,long_df)
+            
+            st.title("Each Channel Insights")
+            channel_sel=st.selectbox("Select Channel Name",list(df["channel_name"].unique()))
+            filtered_df = df[df["channel_name"] == channel_sel]  #check channel name if its exist or not
+
+            st.metric("Total Videos", filtered_df["Video_title"].nunique()) #count unique video title
+            
+            col1,col2=st.columns([10,10],gap="medium")
+            with col1:
+                st.subheader("Video Titles")
+                st.dataframe(filtered_df[["Video_title"]].drop_duplicates()) # give unique vieo title
+                
+                st.subheader("Video Analysis")
+                st.caption("Views,likes,dislkes,comment-count as per **trending date**")
+                st.dataframe(filtered_df[["video_id","trending_date","Video_title","views","likes","dislikes","comment_count"]].drop_duplicates())
+                
+            with col2:
+                st.subheader("Video Tags")
+                st.caption("some tags are not availabe")
+                st.dataframe(filtered_df[["tags"]].drop_duplicates())
+                
+                st.subheader("Description")
+                st.caption("Download it for better experience")
+                st.dataframe(filtered_df[["description"]].drop_duplicates())
+                
+            
+                
         def recommendation_page():
             st.success("🎯 Recommendation Engine Area")
-            st.write("Model predictions and clustering will be displayed here")
+            tab1,tab2=st.tabs(["Arena","How it Works"])
+            
+            with tab1:
+                channel_sel=st.selectbox("Select Channel Name",list(df["channel_name"].unique()))
+                filtered_df = df[df["channel_name"] == channel_sel]  #check channel name if its exist or not
 
+                st.metric("Total Videos", filtered_df["Video_title"].nunique()) #count unique video title
+
+                # Display unique video titles
+                st.dataframe(filtered_df[["Video_title"]].drop_duplicates()) # give unique vieo title
+            with tab2:
+                st.markdown(
+                    """
+                    [![GitHub](https://img.shields.io/badge/GitHub-Repo-black?logo=github)](https://github.com/Bilall2003/youtube-videos-recommendation-system.git)
+                    ![Version](https://img.shields.io/badge/version-0.1.5-blue)
+                    """,
+                    unsafe_allow_html=True
+                )
+
+
+                st.markdown("""# Machine Learning & Clustering # 
+
+To move beyond simple analytics, the system applies unsupervised machine learning techniques:
+
+>> **Feature Engineering**
+
+Numerical engagement metrics are selected
+
+Data is scaled to ensure fair distance calculations
+
+>> **Clustering (K-Means)**
+
+Videos or channels are grouped into clusters based on engagement behavior
+
+The Elbow Method is used to determine the optimal number of clusters
+
+Each cluster represents a distinct engagement pattern
+
+>> **Purpose of Clustering**
+
+Identify high-performing vs low-performing content
+
+Understand audience engagement behavior
+
+Enable recommendation strategies based on similar content patterns
+
+>> **Insights & Recommendations**
+
+Based on clustering and engagement analysis, the system can:
+
+Recommend content types with higher engagement
+
+Identify channels with growth potential
+
+Highlight patterns in audience interaction
+
+Support data-driven content strategy decisions
+
+These insights can be extended to build future recommendation engines.""")
         # ---------------- PAGE RENDER ----------------
         if st.session_state.page == "start":
             start_page()
@@ -366,7 +452,9 @@ class Dashboard:
 # ---------------- MAIN ----------------
 if __name__ == "__main__":
     App = Dashboard(
-        file_path=r"youtube_trending_updated.csv"
+        file_path=r"D:\Bilal folder\AIML\ML practice\task1\youtube_trending_updated.csv"
     )
     df = App.app()
     App.dashboard(df)
+# add subscriber to channel name
+# like,dislikes of each video
