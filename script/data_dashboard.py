@@ -366,11 +366,11 @@ class Dashboard:
             with col2:
                 st.subheader("Video Tags")
                 st.caption("some tags are not availabe")
-                st.dataframe(filtered_df[["tags"]].drop_duplicates())
+                st.dataframe(filtered_df["tags"].drop_duplicates())
                 
                 st.subheader("Description")
                 st.caption("Download it for better experience")
-                st.dataframe(filtered_df[["description"]].drop_duplicates())
+                st.dataframe(filtered_df["description"].drop_duplicates())
             
             sele_video=st.selectbox("Choose video to view insights",filtered_df["Video_title"].unique())
             video_df = filtered_df[filtered_df["Video_title"] == sele_video]
@@ -388,16 +388,42 @@ class Dashboard:
                 
         def recommendation_page():
             st.success("🎯 Recommendation Engine Area")
-            tab1,tab2=st.tabs(["Arena","How it Works"])
             
+            tab1, tab2 = st.tabs(["Arena", "How it Works"])
+
             with tab1:
-                channel_sel=st.selectbox("Select Channel Name",list(df["channel_name"].unique()))
-                filtered_df = df[df["channel_name"] == channel_sel]  #check channel name if its exist or not
+                channel_sel = st.selectbox("Select Channel Name",df["channel_name"].unique() )
 
-                st.metric("Total Videos", filtered_df["Video_title"].nunique()) #count unique video title
+                filtered_df = df[df["channel_name"] == channel_sel].drop_duplicates(subset="video_id").head(5)#drop duplicates and return 5 rows as per channel select
 
-                # Display unique video titles
-                st.dataframe(filtered_df[["Video_title"]].drop_duplicates()) # give unique vieo title
+                st.subheader(f"📺 Videos from {channel_sel}")
+
+                for _, row in filtered_df.iterrows():
+                    video_id = row["video_id"]
+                    title = row["Video_title"]
+
+                    video_url = f"https://www.youtube.com/watch?v={video_id}"
+                    thumbnail_url = f"https://i.ytimg.com/vi/{video_id}/hqdefault.jpg"
+
+                    col1, col2 = st.columns([1, 2])
+
+                    with col1:
+                        st.markdown(
+                            f"""
+                            <a href="{video_url}" target="_blank">
+                                <img src="{thumbnail_url}" width="280">
+                            </a>
+                            """,
+                            unsafe_allow_html=True
+                        )
+
+                    with col2:
+                        st.markdown(f"### {title}")
+                        st.markdown(f"[▶ Watch on YouTube]({video_url})")
+
+                    st.divider()
+
+
             with tab2:
                 st.markdown(
                     """
