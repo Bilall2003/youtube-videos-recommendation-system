@@ -394,11 +394,56 @@ class Dashboard:
             with tab1:
                 channel_sel = st.selectbox("Select Channel Name",df["channel_name"].unique() )
 
-                filtered_df = df[df["channel_name"] == channel_sel].drop_duplicates(subset="video_id").head(5)#drop duplicates and return 5 rows as per channel select
+                filtered_df = df[df["channel_name"] == channel_sel].drop_duplicates(subset="video_id").head(3)#drop duplicates and return 5 rows as per channel select
 
                 st.subheader(f"📺 Videos from {channel_sel}")
 
                 for _, row in filtered_df.iterrows():
+                    video_id = row["video_id"]
+                    title = row["Video_title"]
+
+                    video_url = f"https://www.youtube.com/watch?v={video_id}"
+                    thumbnail_url = f"https://i.ytimg.com/vi/{video_id}/hqdefault.jpg"
+
+                    col1, col2= st.columns([1, 2])
+
+                    with col1:
+                        st.markdown(
+                            f"""
+                            <a href="{video_url}" target="_blank">
+                                <img src="{thumbnail_url}" width="280">
+                            </a>
+                            """,
+                            unsafe_allow_html=True
+                        )
+
+                    with col2:
+                        st.markdown(f"### {title}")
+                        st.markdown(f"[▶ Watch on YouTube]({video_url})")
+
+                    st.divider()
+                    
+                    
+                    
+                st.markdown("<h2 class='title'>More From This Channel</h2>", unsafe_allow_html=True)
+                
+                channel_df = df[df["channel_name"] == channel_sel]
+
+                channel_df =channel_df.drop_duplicates("video_id").sort_values(
+                    by=["views", "likes", "comment_count"],
+                    ascending=False
+                ).head(3)
+                
+                # IDs already shown above
+                shown_video_ids = filtered_df["video_id"]
+
+                # More videos from same channel (excluding already shown)
+                unique_channel = df[
+                    (df["channel_name"] == channel_sel) &
+                    (~df["video_id"].isin(shown_video_ids))
+                ]
+
+                for _, row in unique_channel.drop_duplicates("video_id").head(3).iterrows():
                     video_id = row["video_id"]
                     title = row["Video_title"]
 
