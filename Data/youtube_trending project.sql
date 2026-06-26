@@ -10,8 +10,8 @@ SELECT COUNT(*) FROM data_info WHERE description =' ';
 
 SELECT user, host, plugin FROM mysql.user;
 
-CREATE USER 'app_user'@'localhost' IDENTIFIED BY 'AppPass123';
-GRANT ALL PRIVILEGES ON your_db.* TO 'app_user'@'localhost';
+CREATE USER ''@'localhost' IDENTIFIED BY '';
+GRANT ALL PRIVILEGES ON your_db.* TO ''@'localhost';
 FLUSH PRIVILEGES;
 
 select * from data_info_clean where Cluster_Name="Viral Superstars";
